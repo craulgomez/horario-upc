@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Reglas de impresión para PDF */
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+  header, footer, nav, button {
+    display: none !important;
+  }
+  #schedule-calendar-capture {
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+  }
+}

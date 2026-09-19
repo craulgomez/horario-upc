@@ -1,0 +1,21 @@
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Maven Start Up Shell Script
+# ----------------------------------------------------------------------------
+set -e
+
+exec_dir="$(dirname "$0")"
+wrapper_jar="$exec_dir/.mvn/wrapper/maven-wrapper.jar"
+
+if [ ! -f "$wrapper_jar" ]; then
+    echo "Downloading maven-wrapper.jar..."
+    curl -o "$wrapper_jar" "https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar"
+fi
+
+if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+exec "$JAVACMD" -classpath "$wrapper_jar" "-Dmaven.home=$exec_dir/.mvn/wrapper/dists" org.apache.maven.wrapper.MavenWrapperMain "$@"

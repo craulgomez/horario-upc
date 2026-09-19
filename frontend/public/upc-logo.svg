@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="upcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F5132" />
+      <stop offset="100%" stop-color="#007A3D" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="20" fill="url(#upcGrad)" />
+  <path d="M 50 15 L 80 30 L 80 60 C 80 75 50 88 50 88 C 50 88 20 75 20 60 L 20 30 Z" fill="none" stroke="#D4AF37" stroke-width="4" stroke-linejoin="round" />
+  <text x="50" y="58" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF" text-anchor="middle">UPC</text>
+</svg>
