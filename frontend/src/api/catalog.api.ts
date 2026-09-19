@@ -6,7 +6,8 @@ export const catalogApi = {
   getPrograms: async (): Promise<Program[]> => {
     try {
       const res = await apiClient.get<Program[]>('/catalog/programas');
-      return res.data;
+      if (Array.isArray(res.data) && res.data.length > 0) return res.data;
+      return MOCK_PROGRAMS;
     } catch {
       return MOCK_PROGRAMS;
     }
@@ -15,7 +16,8 @@ export const catalogApi = {
   getPeriods: async (): Promise<Period[]> => {
     try {
       const res = await apiClient.get<Period[]>('/catalog/periodos');
-      return res.data;
+      if (Array.isArray(res.data) && res.data.length > 0) return res.data;
+      return MOCK_PERIODS;
     } catch {
       return MOCK_PERIODS;
     }
@@ -24,7 +26,8 @@ export const catalogApi = {
   getActivePeriod: async (): Promise<Period> => {
     try {
       const res = await apiClient.get<Period>('/catalog/periodos/activo');
-      return res.data;
+      if (res.data && typeof res.data === 'object' && res.data.id) return res.data;
+      return MOCK_PERIODS[0];
     } catch {
       return MOCK_PERIODS[0];
     }
@@ -33,7 +36,8 @@ export const catalogApi = {
   getSubjects: async (params?: { programaId?: number; semestre?: number; search?: string }): Promise<Subject[]> => {
     try {
       const res = await apiClient.get<Subject[]>('/catalog/materias', { params });
-      return res.data;
+      if (Array.isArray(res.data)) return res.data;
+      throw new Error('Invalid format');
     } catch {
       let list = [...MOCK_SUBJECTS];
       if (params?.semestre) {
@@ -52,7 +56,8 @@ export const catalogApi = {
       const res = await apiClient.get<Subject>(`/catalog/materias/${materiaId}/grupos`, {
         params: { periodoId }
       });
-      return res.data;
+      if (res.data && typeof res.data === 'object' && Array.isArray(res.data.grupos)) return res.data;
+      throw new Error('Invalid format');
     } catch {
       const sub = MOCK_SUBJECTS.find((s) => s.id === materiaId) || MOCK_SUBJECTS[0];
       const groups = MOCK_GROUPS.filter((g) => g.materiaId === materiaId);
@@ -67,7 +72,8 @@ export const catalogApi = {
   getGroupDetails: async (grupoId: number): Promise<Group> => {
     try {
       const res = await apiClient.get<Group>(`/catalog/grupos/${grupoId}`);
-      return res.data;
+      if (res.data && typeof res.data === 'object' && res.data.id) return res.data;
+      throw new Error('Grupo no encontrado');
     } catch {
       const g = MOCK_GROUPS.find((grp) => grp.id === grupoId);
       if (g) return g;

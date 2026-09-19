@@ -12,7 +12,10 @@ export const scheduleApi = {
   validateConflicts: async (grupoIds: number[]): Promise<ConflictValidationResult> => {
     try {
       const res = await apiClient.post<ConflictValidationResult>('/schedules/validate-conflicts', { grupoIds });
-      return res.data;
+      if (res.data && typeof res.data === 'object' && typeof res.data.esValido === 'boolean') {
+        return res.data;
+      }
+      throw new Error('Offline');
     } catch {
       // Validación local en memoria
       const grupos = MOCK_GROUPS.filter((g) => grupoIds.includes(g.id));
@@ -62,7 +65,10 @@ export const scheduleApi = {
   }): Promise<GeneratedScheduleOption[]> => {
     try {
       const res = await apiClient.post<GeneratedScheduleOption[]>('/schedules/generate', payload);
-      return res.data;
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        return res.data;
+      }
+      throw new Error('Offline');
     } catch {
       // Generador local de prueba
       const candidateGroups = MOCK_GROUPS.filter((g) => payload.materiaIds.includes(g.materiaId));
@@ -167,7 +173,10 @@ export const scheduleApi = {
   }): Promise<SavedSchedule> => {
     try {
       const res = await apiClient.post<SavedSchedule>('/schedules/save', payload);
-      return res.data;
+      if (res.data && typeof res.data === 'object' && res.data.id) {
+        return res.data;
+      }
+      throw new Error('Offline');
     } catch {
       // Guardar en localStorage como fallback
       const grupos = MOCK_GROUPS.filter((g) => payload.grupoIds.includes(g.id));
@@ -193,7 +202,10 @@ export const scheduleApi = {
   getSavedSchedules: async (): Promise<SavedSchedule[]> => {
     try {
       const res = await apiClient.get<SavedSchedule[]>('/schedules/saved');
-      return res.data;
+      if (Array.isArray(res.data)) {
+        return res.data;
+      }
+      throw new Error('Offline');
     } catch {
       const existing = JSON.parse(localStorage.getItem('upc_saved_schedules') || '[]');
       if (existing.length === 0) {
@@ -216,7 +228,10 @@ export const scheduleApi = {
   getSavedScheduleById: async (id: number): Promise<SavedSchedule> => {
     try {
       const res = await apiClient.get<SavedSchedule>(`/schedules/saved/${id}`);
-      return res.data;
+      if (res.data && typeof res.data === 'object' && res.data.id) {
+        return res.data;
+      }
+      throw new Error('Offline');
     } catch {
       const existing: SavedSchedule[] = JSON.parse(localStorage.getItem('upc_saved_schedules') || '[]');
       const found = existing.find((s) => s.id === id);

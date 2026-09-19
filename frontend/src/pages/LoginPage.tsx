@@ -29,9 +29,21 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const setQuickCredentials = (email: string, pass: string) => {
+  const handleQuickLogin = async (email: string, pass: string) => {
     setCorreo(email);
     setPassword(pass);
+    setError(null);
+    setLoading(true);
+
+    try {
+      await login(email, pass);
+      navigate('/dashboard');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Error al iniciar sesión.';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,6 +57,37 @@ export const LoginPage: React.FC = () => {
           <p className="text-xs text-slate-500 mt-1">
             Ingresa a tu cuenta de HorarioUPC para planificar tu horario
           </p>
+        </div>
+
+        {/* 1-Click Fast Access Banner */}
+        <div className="mb-6 p-4 rounded-xl bg-emerald-50/80 border border-emerald-200">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900 mb-2">
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <span>Acceso Rápido Demo (1 solo clic)</span>
+          </div>
+          <p className="text-[11px] text-emerald-700 mb-3">
+            Haz clic en el botón de abajo para ingresar directamente sin escribir contraseña:
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleQuickLogin('estudiante@unicesar.edu.co', 'Estudiante123*')}
+              className="py-2.5 px-3 text-center rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50 cursor-pointer"
+            >
+              <span>🎓 Estudiante</span>
+              <span className="text-[10px] font-normal opacity-90">Entrar en 1 clic</span>
+            </button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleQuickLogin('admin@unicesar.edu.co', 'Admin123*')}
+              className="py-2.5 px-3 text-center rounded-lg bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs shadow-sm transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50 cursor-pointer"
+            >
+              <span>🛡️ Administrador</span>
+              <span className="text-[10px] font-normal opacity-90">Entrar en 1 clic</span>
+            </button>
+          </div>
         </div>
 
         {searchParams.get('expired') && (
@@ -64,7 +107,7 @@ export const LoginPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-              Correo Institucional
+              O ingresa con tu correo
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -99,44 +142,18 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 rounded-xl bg-upc-green-600 hover:bg-upc-green-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <>
                 <LogIn className="w-4 h-4" />
-                <span>Ingresar</span>
+                <span>Ingresar con credenciales</span>
               </>
             )}
           </button>
         </form>
-
-        {/* Demo Fast Logins */}
-        <div className="mt-6 pt-6 border-t border-slate-100">
-          <div className="flex items-center gap-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-upc-gold-500" />
-            <span>Accesos rápidos de demostración</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => setQuickCredentials('estudiante@unicesar.edu.co', 'Estudiante123*')}
-              className="p-2 text-left rounded-lg border border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/50 transition-colors text-xs"
-            >
-              <span className="font-bold block text-slate-800">Estudiante</span>
-              <span className="text-[10px] text-slate-500">Demo Estudiante</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setQuickCredentials('admin@unicesar.edu.co', 'Admin123*')}
-              className="p-2 text-left rounded-lg border border-slate-200 hover:border-amber-500 bg-slate-50 hover:bg-amber-50/50 transition-colors text-xs"
-            >
-              <span className="font-bold block text-slate-800">Administrador</span>
-              <span className="text-[10px] text-slate-500">Demo Admin</span>
-            </button>
-          </div>
-        </div>
 
         <p className="text-center text-xs text-slate-500 mt-6">
           ¿No tienes una cuenta?{' '}
