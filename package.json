@@ -1,0 +1,12 @@
+{
+  "name": "horario-upc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo root for HorarioUPC - Universidad Popular del Cesar",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "frontend:install": "npm --prefix frontend install"
+  }
+}
