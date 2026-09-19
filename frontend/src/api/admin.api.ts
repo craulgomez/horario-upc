@@ -1,6 +1,5 @@
 import { apiClient } from './client';
 import { CsvImportResult, Group, Period, Program, Subject } from '../types';
-import { MOCK_GROUPS, MOCK_PERIODS, MOCK_PROGRAMS, MOCK_SUBJECTS } from './mockData';
 
 export const adminApi = {
   importCsv: async (file: File): Promise<CsvImportResult> => {
@@ -22,8 +21,7 @@ export const adminApi = {
         sesionesProcesadas: 96,
         gruposConNDOC: 3,
         gruposConNREF: 2,
-        materiasCreadas: 4,
-        gruposCreados: 48,
+        errores: [],
         advertencias: [
           '3 grupos tienen docente asignado como NDOC (Docente pendiente)',
           '2 grupos tienen aula asignada como NREF (Aula pendiente)'
@@ -41,7 +39,7 @@ export const adminApi = {
         id: Date.now(),
         codigo: data.codigo || 'NEW-PROG',
         nombre: data.nombre || 'Nuevo Programa',
-        sede: data.sede || 'Valledupar',
+        universidad: data.universidad || 'Universidad Popular del Cesar',
         activo: true
       };
     }
@@ -55,7 +53,9 @@ export const adminApi = {
       return {
         id: Date.now(),
         nombre: data.nombre || '2026-2',
-        esActivo: data.esActivo ?? true
+        fechaInicio: data.fechaInicio || '2026-08-01',
+        fechaFin: data.fechaFin || '2026-12-15',
+        activo: data.activo ?? true
       };
     }
   },
@@ -86,21 +86,21 @@ export const adminApi = {
     } catch {
       return {
         id: Date.now(),
-        materiaId: data.materiaId || 1,
-        materiaNombre: data.materiaNombre || 'Materia UPC',
-        materiaCodigo: data.materiaCodigo || 'MAT-01',
-        materiaCreditos: 3,
-        semestre: 1,
-        periodoId: data.periodoId || 1,
-        numeroGrupo: data.numeroGrupo || 1,
-        docente: data.docente || 'Docente UPC',
-        tieneDocenteAsignado: true,
+        numeroGrupo: String(data.numeroGrupo || '01'),
         modalidad: 'PRESENCIAL',
         sede: 'SABANAS',
-        cupoMaximo: 35,
-        matriculados: 0,
-        disponibles: 35,
+        docente: data.docente || 'Docente UPC',
+        aula: 'S-201',
+        estado: 'ACTIVO',
+        tieneDocenteAsignado: true,
         tieneRecursoFisicoAsignado: true,
+        materiaId: data.materiaId || 1,
+        materiaCodigo: data.materiaCodigo || 'MAT-01',
+        materiaNombre: data.materiaNombre || 'Materia UPC',
+        materiaCreditos: 3,
+        semestreSugerido: 1,
+        periodoId: data.periodoId || 1,
+        periodoNombre: '2026-2',
         sesiones: []
       };
     }
