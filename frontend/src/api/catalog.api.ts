@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 import { Group, Period, Program, Subject } from '../types';
-import { MOCK_GROUPS, MOCK_PERIODS, MOCK_PROGRAMS, MOCK_SUBJECTS } from './mockData';
+import { MOCK_GROUPS, MOCK_PERIODS, MOCK_PROGRAMS, MOCK_SUBJECTS, getFallbackGroupsForSubject } from './mockData';
 
 export const catalogApi = {
   getPrograms: async (): Promise<Program[]> => {
@@ -36,10 +36,12 @@ export const catalogApi = {
   getSubjects: async (params?: { programaId?: number; semestre?: number; search?: string }): Promise<Subject[]> => {
     try {
       const res = await apiClient.get<Subject[]>('/catalog/materias', { params });
-      if (Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res.data)) {
+        return res.data.filter((s) => s.semestreSugerido > 1);
+      }
       throw new Error('Invalid format');
     } catch {
-      let list = [...MOCK_SUBJECTS];
+      let list = MOCK_SUBJECTS.filter((s) => s.semestreSugerido > 1);
       if (params?.semestre) {
         list = list.filter((s) => s.semestreSugerido === params.semestre);
       }
@@ -56,11 +58,16 @@ export const catalogApi = {
       const res = await apiClient.get<Subject>(`/catalog/materias/${materiaId}/grupos`, {
         params: { periodoId }
       });
-      if (res.data && typeof res.data === 'object' && Array.isArray(res.data.grupos)) return res.data;
-      throw new Error('Invalid format');
+      if (res.data && typeof res.data === 'object' && Array.isArray(res.data.grupos) && res.data.grupos.length > 0) {
+        return res.data;
+      }
+      throw new Error('Invalid format or empty');
     } catch {
       const sub = MOCK_SUBJECTS.find((s) => s.id === materiaId) || MOCK_SUBJECTS[0];
-      const groups = MOCK_GROUPS.filter((g) => g.materiaId === materiaId);
+      let groups = MOCK_GROUPS.filter((g) => g.materiaId === materiaId);
+      if (groups.length === 0 && sub) {
+        groups = getFallbackGroupsForSubject(sub);
+      }
       return {
         ...sub,
         grupos: groups,
@@ -75,7 +82,15 @@ export const catalogApi = {
       if (res.data && typeof res.data === 'object' && res.data.id) return res.data;
       throw new Error('Grupo no encontrado');
     } catch {
-      const g = MOCK_GROUPS.find((grp) => grp.id === grupoId);
+      let g = MOCK_GROUPS.find((grp) => grp.id === grupoId);
+      if (!g) {
+        const materiaId = Math.floor(grupoId / 100);
+        const sub = MOCK_SUBJECTS.find((s) => s.id === materiaId);
+        if (sub) {
+          const fallbacks = getFallbackGroupsForSubject(sub);
+          g = fallbacks.find((grp) => grp.id === grupoId);
+        }
+      }
       if (g) return g;
       throw new Error('Grupo no encontrado');
     }

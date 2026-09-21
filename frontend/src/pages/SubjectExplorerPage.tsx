@@ -37,7 +37,7 @@ export const SubjectExplorerPage: React.FC = () => {
       }),
   });
 
-  const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
+  const semesters = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const isSubjectSelected = (id: number) => selectedSubjects.some((s) => s.id === id);
 
@@ -48,7 +48,7 @@ export const SubjectExplorerPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">Catálogo de Materias</h1>
           <p className="text-xs text-slate-500">
-            Explora las asignaturas de Ingeniería de Sistemas y agrégalas a tu canasta de planificación
+            Explora las asignaturas de Ingeniería de Sistemas (Semestres 2 al 10) y agrégalas a tu canasta de planificación
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export const SubjectExplorerPage: React.FC = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar por código (ej: SS200, MT104) o nombre de materia..."
+            placeholder="Buscar por código (ej: SS200, MT301B) o nombre de materia..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
           />
         </div>
@@ -88,7 +88,7 @@ export const SubjectExplorerPage: React.FC = () => {
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Todos
+            Todos (2°-10°)
           </button>
           {semesters.map((sem) => (
             <button
@@ -104,6 +104,11 @@ export const SubjectExplorerPage: React.FC = () => {
               {sem}° Semestre
             </button>
           ))}
+        </div>
+
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+          <span className="font-extrabold text-amber-700 bg-amber-200/60 px-1.5 py-0.5 rounded text-[10px] shrink-0">INFORMACIÓN UPC</span>
+          <span>El <strong>1° Semestre</strong> no se incluye para armar horarios ya que la universidad le asigna un bloque de horario cerrado a los estudiantes nuevos.</span>
         </div>
       </div>
 
