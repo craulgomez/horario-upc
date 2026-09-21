@@ -1,0 +1,62 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment variables & Local secrets
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Java & Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+.mvn/wrapper/maven-wrapper.jar
+backend/target/
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+frontend/dist/
+frontend/node_modules/
+
+# IDE & Editors
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Logs & Temp files
+logs/
+*.log
+*.tmp
+*.bak
+temp/
+scratch/
+
+# Database files & Docker volumes
+pgdata/
+postgres_data/
