@@ -37,7 +37,7 @@ export const SubjectExplorerPage: React.FC = () => {
       }),
   });
 
-  const semesters = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const semesters = [2, 3, 4, 5, 6, 7, 8, 9];
 
   const isSubjectSelected = (id: number) => selectedSubjects.some((s) => s.id === id);
 
@@ -46,9 +46,14 @@ export const SubjectExplorerPage: React.FC = () => {
       {/* Cabecera */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Catálogo de Materias</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Catálogo de Asignaturas</h1>
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black uppercase">
+              Pensum V-0402-IS-D-07
+            </span>
+          </div>
           <p className="text-xs text-slate-500">
-            Explora las asignaturas de Ingeniería de Sistemas (Semestres 2 al 10) y agrégalas a tu canasta de planificación
+            Malla oficial de Ingeniería de Sistemas (9 Semestres, 155 créditos). Consulta prerrequisitos, qué materia abre y todos los grupos ofertados 2026-2.
           </p>
         </div>
 
@@ -88,7 +93,7 @@ export const SubjectExplorerPage: React.FC = () => {
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Todos (2°-10°)
+            Todos (2°-9°)
           </button>
           {semesters.map((sem) => (
             <button
@@ -108,7 +113,7 @@ export const SubjectExplorerPage: React.FC = () => {
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
           <span className="font-extrabold text-amber-700 bg-amber-200/60 px-1.5 py-0.5 rounded text-[10px] shrink-0">INFORMACIÓN UPC</span>
-          <span>El <strong>1° Semestre</strong> no se incluye para armar horarios ya que la universidad le asigna un bloque de horario cerrado a los estudiantes nuevos.</span>
+          <span>El <strong>1° Semestre</strong> no se incluye para armar horarios ya que la universidad le asigna un bloque de horario cerrado a los estudiantes que ingresan a primer semestre.</span>
         </div>
       </div>
 
@@ -125,7 +130,6 @@ export const SubjectExplorerPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {subjects.map((materia) => {
             const isSelected = isSubjectSelected(materia.id);
-            const isExpanded = expandedSubjectId === materia.id;
 
             return (
               <div
@@ -150,13 +154,36 @@ export const SubjectExplorerPage: React.FC = () => {
                   </div>
 
                   {/* Nombre */}
-                  <h3 className="font-extrabold text-slate-900 text-base leading-snug mb-3">
+                  <h3 className="font-extrabold text-slate-900 text-base leading-snug mb-2">
                     {materia.nombre}
                   </h3>
+
+                  {/* Insignia de grupos disponibles */}
+                  <div className="mb-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                      👥 {materia.cantidadGrupos || 0} {(materia.cantidadGrupos === 1) ? 'grupo disponible' : 'grupos disponibles'}
+                    </span>
+                  </div>
+
+                  {/* Prerrequisitos */}
+                  {materia.prerequisitos && materia.prerequisitos.length > 0 && (
+                    <div className="mt-2 text-[11px] bg-amber-50 border border-amber-200/80 rounded-lg px-2.5 py-1 text-amber-900 flex items-center gap-1.5">
+                      <span className="font-extrabold text-[10px] uppercase text-amber-800 shrink-0">Prerrequisito:</span>
+                      <span className="font-mono font-bold">{materia.prerequisitos.join(', ')}</span>
+                    </div>
+                  )}
+
+                  {/* Qué materia abre */}
+                  {materia.abre && materia.abre.length > 0 && (
+                    <div className="mt-1.5 text-[11px] bg-indigo-50 border border-indigo-200/80 rounded-lg px-2.5 py-1 text-indigo-900 flex items-center gap-1.5">
+                      <span className="font-extrabold text-[10px] uppercase text-indigo-700 shrink-0">Abre a:</span>
+                      <span className="font-mono font-bold truncate">{materia.abre.join(', ')}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Acciones de la tarjeta */}
-                <div className="pt-3 border-t border-slate-100 space-y-2">
+                <div className="pt-3 border-t border-slate-100 mt-4 space-y-2">
                   <div className="flex gap-2">
                     <button
                       type="button"
@@ -183,6 +210,7 @@ export const SubjectExplorerPage: React.FC = () => {
                     <SubjectGroupsButton
                       materiaId={materia.id}
                       periodoId={periodoId}
+                      cantidadGrupos={materia.cantidadGrupos}
                     />
                   </div>
                 </div>
@@ -196,9 +224,10 @@ export const SubjectExplorerPage: React.FC = () => {
 };
 
 // Componente modal/popover para previsualizar grupos de una materia
-const SubjectGroupsButton: React.FC<{ materiaId: number; periodoId: number }> = ({
+const SubjectGroupsButton: React.FC<{ materiaId: number; periodoId: number; cantidadGrupos?: number }> = ({
   materiaId,
   periodoId,
+  cantidadGrupos,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -213,10 +242,11 @@ const SubjectGroupsButton: React.FC<{ materiaId: number; periodoId: number }> = 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-semibold"
-        title="Ver grupos disponibles"
+        className="px-3 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold flex items-center gap-1.5 transition-colors"
+        title="Ver grupos, docentes y horarios"
       >
-        <BookOpen className="w-4 h-4" />
+        <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
+        <span>Grupos ({cantidadGrupos || 0})</span>
       </button>
 
       {open && (

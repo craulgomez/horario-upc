@@ -71,6 +71,8 @@ export interface Subject {
   activa: boolean;
   cantidadGrupos?: number;
   grupos?: Group[];
+  prerequisitos?: string[];
+  abre?: string[];
 }
 
 export interface UserPreference {
